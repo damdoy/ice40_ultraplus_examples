@@ -1,0 +1,14 @@
+# For the iCE40 UltraPlus (iCE40UP5K-QFN) Breakout Board
+
+set_io LED_R 41
+set_io LED_G 40
+set_io LED_B 39
+set_io SW[0] 23
+set_io SW[1] 25
+set_io SW[2] 34
+set_io SW[3] 43
+set_io clk 35
+set_io IOT_43A 32
+set_io IOT_42B 31
+set_io IOT_38B 27
+set_io IOT_39A 26
