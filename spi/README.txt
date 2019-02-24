@@ -8,11 +8,6 @@ The two other bytes are used for data.
 
 To play around with the FPGA, these opcodes are implemented:
 
-//0x02 write 16bits inverted
-//0x03 read 16bits inverted
-//0x04 write leds (16bits LSB)
-//0x05 read leds (16bits LSB)
-
 OPCODE  | Description
 0x0     | Nop, does nothing
 0x1     | Init, starts the state machine on the fpga side
@@ -25,4 +20,3 @@ The host.c example lights up leds and sends 16bits to be inverted.
 
 Most of the SPI initalisation on the host side is taken from the iceprog source code
 https://github.com/cliffordwolf/icestorm/tree/master/iceprog
-
