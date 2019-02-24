@@ -12,3 +12,7 @@ set_io IOT_43A 32
 set_io IOT_42B 31
 set_io IOT_38B 27
 set_io IOT_39A 26
+set_io SPI_SS 16
+set_io SPI_SCK 15
+set_io SPI_MOSI 17
+set_io SPI_MISO 14
