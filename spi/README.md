@@ -1,4 +1,4 @@
-Simple SPI example for the ice40 ultra plus breakout board
+# Simple SPI example for the iCE40 UltraPlus Breakout board
 
 This example is composed of a host C program compiled on Linux communicating with the ice40 FPGA via the FTDI chip on the breakout board.
 
