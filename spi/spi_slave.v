@@ -11,7 +11,7 @@
 module spi_slave(input wire clk, input wire reset,
       input wire SPI_SCK, input wire SPI_SS, input wire SPI_MOSI, output wire SPI_MISO,
       output reg wr_buffer_free, input wr_en, input [15:0] wr_data,
-      output reg rd_data_available, input wire rd_ack, output reg [23:0] rd_data, output reg [2:0] dbg
+      output reg rd_data_available, input wire rd_ack, output reg [23:0] rd_data
    );
 
    reg [4:0] counter_read; //max 32

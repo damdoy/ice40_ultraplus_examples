@@ -15,7 +15,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
    spi_slave spi_slave_inst(.clk(clk), .reset(spi_reset),
       .SPI_SCK(SPI_SCK), .SPI_SS(SPI_SS), .SPI_MOSI(SPI_MOSI), .SPI_MISO(SPI_MISO),
       .wr_buffer_free(spi_wr_buffer_free), .wr_en(spi_wr_en), .wr_data(spi_wr_data),
-      .rd_data_available(spi_rd_data_available), .rd_ack(spi_rd_ack), .rd_data(spi_rd_data)//, .dbg(dbg)
+      .rd_data_available(spi_rd_data_available), .rd_ack(spi_rd_ack), .rd_data(spi_rd_data)
    );
 
    reg [2:0] led;
