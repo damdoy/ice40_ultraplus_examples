@@ -6,10 +6,10 @@ build:
 	arachne-pnr -d 5k -P sg48 -p $(pcf_file) $(filename).blif -o $(filename).asc
 	icepack $(filename).asc $(filename).bin
 
-#prog: #for sram, not useful to read flash
-#	iceprog -S $(filename).bin
+prog: #for sram
+	iceprog -S $(filename).bin
 
-prog:
+prog_flash:
 	iceprog $(filename).bin
 
 clean:

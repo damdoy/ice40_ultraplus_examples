@@ -8,10 +8,17 @@ set_io SW[1] 25
 set_io SW[2] 34
 set_io SW[3] 43
 set_io clk 35
-set_io IOT_43A 32
-set_io IOT_42B 31
-set_io IOT_38B 27
+
+# bank 0
 set_io IOT_39A 26
+set_io IOT_38B 27
+set_io IOT_42B 31
+set_io IOT_43A 32
+set_io IOT_45A_G1 37
+set_io IOT_51A 42
+set_io IOT_50B 38
+
+#spi
 set_io SPI_SS 16
 set_io SPI_SCK 15
 set_io SPI_MOSI 17
