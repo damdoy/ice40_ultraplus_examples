@@ -7,10 +7,10 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
    reg spi_reset;
    wire spi_wr_buffer_free;
    reg spi_wr_en;
-   reg [15:0] spi_wr_data;
+   reg [23:0] spi_wr_data;
    wire spi_rd_data_available;
    reg spi_rd_ack;
-   wire [23:0] spi_rd_data;
+   wire [31:0] spi_rd_data;
 
    spi_slave spi_slave_inst(.clk(clk), .reset(spi_reset),
       .SPI_SCK(SPI_SCK), .SPI_SS(SPI_SS), .SPI_MOSI(SPI_MOSI), .SPI_MISO(SPI_MISO),
@@ -20,10 +20,10 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
 
    reg [2:0] led;
 
-   reg [23:0] spi_recv_data_reg;
+   reg [31:0] spi_recv_data_reg;
    reg handle_data;
 
-   reg [15:0] reg_bits_inversion;
+   reg [23:0] reg_bits_inversion;
 
    assign LED_R = ~led[0];
    assign LED_G = ~led[1];
@@ -56,21 +56,21 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
       if(handle_data == 1) begin
 
          if(spi_recv_data_reg[7:0] == 2) begin //set bit inversion
-            reg_bits_inversion[15:0] <= ~spi_recv_data_reg[23:8];
+            reg_bits_inversion[23:0] <= ~spi_recv_data_reg[31:8];
          end
 
          if(spi_recv_data_reg[7:0] == 3) begin //answer bit inversion
             spi_wr_en <= 1;
-            spi_wr_data[15:0] <= reg_bits_inversion[15:0];
+            spi_wr_data[23:0] <= reg_bits_inversion[23:0];
          end
 
          if(spi_recv_data_reg[7:0] == 4) begin
-            led[2:0] <= spi_recv_data_reg[18:16];
+            led[2:0] <= spi_recv_data_reg[26:24];
          end
 
          if(spi_recv_data_reg[7:0] == 5) begin
             spi_wr_en <= 1;
-            spi_wr_data[15:0] <= {13'b0 ,led[2:0]};
+            spi_wr_data[23:0] <= {21'b0 ,led[2:0]};
          end
          handle_data <= 0;
       end

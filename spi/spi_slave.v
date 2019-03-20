@@ -10,8 +10,8 @@
 
 module spi_slave(input wire clk, input wire reset,
       input wire SPI_SCK, input wire SPI_SS, input wire SPI_MOSI, output wire SPI_MISO,
-      output reg wr_buffer_free, input wr_en, input [15:0] wr_data,
-      output reg rd_data_available, input wire rd_ack, output reg [23:0] rd_data
+      output reg wr_buffer_free, input wr_en, input [23:0] wr_data,
+      output reg rd_data_available, input wire rd_ack, output reg [31:0] rd_data
    );
 
    reg [4:0] counter_read; //max 32
@@ -25,7 +25,7 @@ module spi_slave(input wire clk, input wire reset,
    reg miso_out_reg;
    reg [7:0] state_rd;
    reg [7:0] state_wr;
-   reg [15:0] wr_data_reg; //written data to send to spi/miso
+   reg [23:0] wr_data_reg; //written data to send to spi/miso
 
    //states
    parameter IDLE = 0, INIT=IDLE+1, RD_WAIT_DATA=INIT+1, RD_WAIT_ACK=RD_WAIT_DATA+1, WR_WAIT_DATA=RD_WAIT_ACK+1, WR_WAIT_ACK=WR_WAIT_DATA+1;
@@ -46,7 +46,7 @@ module spi_slave(input wire clk, input wire reset,
       miso_out_reg = 0;
       state_rd = INIT;
       state_wr = INIT;
-      wr_data_reg = 16'hcafe;
+      wr_data_reg = 24'hcafe77;
 
       rd_data_available = 0;
       wr_buffer_free = 1;
@@ -76,10 +76,10 @@ module spi_slave(input wire clk, input wire reset,
          case (state_rd)
          INIT : begin // wait the init opcode from host (0x1) and nothing else
             if(spi_clk_rising_edge == 1'b1) begin
-               rd_data[23:0] <= {mosi_reg[0], rd_data[23:1]};
+               rd_data[31:0] <= {mosi_reg[0], rd_data[31:1]};
                counter_read <= counter_read + 1;
 
-               if(counter_read >= 23) begin //finish recv
+               if(counter_read >= 31) begin //finish recv
                   if(rd_data[8:1] == 8'h1) begin //received init opcode, otherwise ignore
                      state_rd <= RD_WAIT_DATA;
                   end
@@ -101,20 +101,20 @@ module spi_slave(input wire clk, input wire reset,
                   //one clock before to be sent the next on miso
                   if(counter_read == 6) begin //status, read master to slave successful
                      miso_out_reg <= 1;
-                  end else if(counter_read >= 7 && counter_read < 23) begin
+                  end else if(counter_read >= 7 && counter_read < 31) begin
                      miso_out_reg <= wr_data_reg[0];
-                     wr_data_reg[15:0] <= {wr_data_reg[0], wr_data_reg[15:1]};
+                     wr_data_reg[23:0] <= {wr_data_reg[0], wr_data_reg[23:1]};
                   end
                end
 
-               rd_data[23:0] <= {mosi_reg[0], rd_data[23:1]};
+               rd_data[31:0] <= {mosi_reg[0], rd_data[31:1]};
                counter_read <= counter_read + 1;
 
-               if(counter_read >= 23) begin //finish recv
+               if(counter_read >= 31) begin //finish recv
 
                   if (wr_buffer_free == 0) begin //something was written, now free
                      wr_buffer_free <= 1;
-                     wr_data_reg <= 16'h00; //clear write buffer
+                     wr_data_reg <= 24'h00; //clear write buffer
                   end
                   rd_data_available <= 1;
                   state_rd <= RD_WAIT_ACK;
