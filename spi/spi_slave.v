@@ -24,8 +24,14 @@ module spi_slave(input wire clk, input wire reset,
    reg [1:0] mosi_reg;
    reg miso_out_reg;
    reg [7:0] state_rd;
-   reg [7:0] state_wr;
+
+   reg wr_reg_full;
    reg [23:0] wr_data_reg; //written data to send to spi/miso
+   reg wr_queue_full;
+   reg [23:0] wr_data_queue; //waiting to be written in the register, avoid a write while communcating with SPI
+
+   reg buffer_rd_ack;
+   reg [31:0] rd_data_local;
 
    //states
    parameter IDLE = 0, INIT=IDLE+1, RD_WAIT_DATA=INIT+1, RD_WAIT_ACK=RD_WAIT_DATA+1, WR_WAIT_DATA=RD_WAIT_ACK+1, WR_WAIT_ACK=WR_WAIT_DATA+1;
@@ -45,17 +51,24 @@ module spi_slave(input wire clk, input wire reset,
       mosi_reg = 0;
       miso_out_reg = 0;
       state_rd = INIT;
-      state_wr = INIT;
+      wr_reg_full = 0;
       wr_data_reg = 24'hcafe77;
+      wr_queue_full = 0;
+      wr_data_queue = 0;
+
+      buffer_rd_ack = 0;
+      rd_data = 0;
+      rd_data_local = 0;
 
       rd_data_available = 0;
-      wr_buffer_free = 1;
+      // wr_buffer_free = 1;
    end
 
    always @(posedge clk)
    begin
       if(reset == 1) begin
          rd_data <= 0;
+         rd_data_local <= 0;
          rd_data_available <= 0;
          state_rd <= INIT;
       end else begin
@@ -63,7 +76,7 @@ module spi_slave(input wire clk, input wire reset,
          spi_clk_reg <= {spi_clk_reg[0], SPI_SCK};
          mosi_reg <= {mosi_reg[0], SPI_MOSI};
          spi_ss_reg <= {spi_ss_reg[0], SPI_SS};
-
+         wr_buffer_free <= (~wr_queue_full) & (~wr_reg_full);
 
          if (spi_ss_falling_edge == 1 || spi_ss_rising_edge == 1) begin
             counter_read <= 0;
@@ -76,11 +89,11 @@ module spi_slave(input wire clk, input wire reset,
          case (state_rd)
          INIT : begin // wait the init opcode from host (0x1) and nothing else
             if(spi_clk_rising_edge == 1'b1) begin
-               rd_data[31:0] <= {mosi_reg[0], rd_data[31:1]};
+               rd_data_local[31:0] <= {mosi_reg[0], rd_data_local[31:1]};
                counter_read <= counter_read + 1;
 
                if(counter_read >= 31) begin //finish recv
-                  if(rd_data[8:1] == 8'h1) begin //received init opcode, otherwise ignore
+                  if(rd_data_local[8:1] == 8'h1) begin //received init opcode, otherwise ignore
                      state_rd <= RD_WAIT_DATA;
                   end
                   counter_read <= 0;
@@ -90,12 +103,11 @@ module spi_slave(input wire clk, input wire reset,
          end
          RD_WAIT_DATA : begin
             if(spi_clk_rising_edge == 1'b1) begin
-
-               if(counter_read == 5) begin //status, write master to slave successful
+               if(counter_read == 5 && rd_data_available == 0) begin //status, write master to slave successful
                   miso_out_reg <= 1;
                end
 
-               if (wr_buffer_free == 0) begin //something ready to be written
+               if (wr_reg_full == 1) begin //something ready to be written
 
                   //bits 0-7 reserved for status, starting to write wr_data_reg
                   //one clock before to be sent the next on miso
@@ -107,46 +119,50 @@ module spi_slave(input wire clk, input wire reset,
                   end
                end
 
-               rd_data[31:0] <= {mosi_reg[0], rd_data[31:1]};
+               rd_data_local[31:0] <= {mosi_reg[0], rd_data_local[31:1]};
                counter_read <= counter_read + 1;
 
                if(counter_read >= 31) begin //finish recv
 
-                  if (wr_buffer_free == 0) begin //something was written, now free
-                     wr_buffer_free <= 1;
+                  if (wr_reg_full == 1) begin //something was written, now free
+                     wr_reg_full <= 0;
                      wr_data_reg <= 24'h00; //clear write buffer
                   end
-                  rd_data_available <= 1;
-                  state_rd <= RD_WAIT_ACK;
+
+                  if(rd_data_available == 0) begin
+                     rd_data_available <= 1;
+                     rd_data <= {mosi_reg[0], rd_data_local[31:1]};
+                  end
+                  state_rd <= RD_WAIT_DATA;
                   counter_read <= 0;
                end
-            end
-         end
-         // waiting ack from top ready to read
-         RD_WAIT_ACK : begin
-            if(rd_ack == 1) begin
-               rd_data_available <= 0;
-               state_rd <= RD_WAIT_DATA;
             end
          end
          default : begin
          end
          endcase
 
-         //states for writing not really needed, in case of improvement
-         case (state_wr)
-         INIT : begin
-            state_wr <= WR_WAIT_DATA;
+         if(rd_ack == 1 && rd_data_available == 1 && buffer_rd_ack == 0) begin
+            buffer_rd_ack <= 1;
          end
-         WR_WAIT_DATA : begin
-            if (wr_en == 1 && wr_buffer_free == 1) begin
-               wr_data_reg <= wr_data;
-               wr_buffer_free <= 0;
-            end
+
+         if(buffer_rd_ack == 1 && counter_read == 0) begin
+            rd_data_available <= 0;
+            buffer_rd_ack <= 0;
          end
-         default : begin
+
+         //write
+         if (wr_en == 1 && wr_buffer_free == 1) begin
+            wr_queue_full <= 1;
+            wr_data_queue <= wr_data;
          end
-         endcase;
+
+         //move from queue to reg only when no com (counter_read == 0)
+         if(wr_queue_full == 1 && counter_read == 0) begin
+            wr_data_reg <= wr_data_queue;
+            wr_queue_full <= 0;
+            wr_reg_full <= 1;
+         end
       end
    end
 endmodule

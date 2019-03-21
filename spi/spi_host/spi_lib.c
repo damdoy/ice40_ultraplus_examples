@@ -180,12 +180,14 @@ int spi_init()
 		error(2);
 	}
 
-   //enable clock divide by 5
+   //enable clock divide by 5 ==> 6MHz
    send_byte(MC_TCK_D5);
-   //6Mhz
+
+   //divides by value+1
 	send_byte(MC_SET_CLK_DIV);
 	send_byte(0);
-	send_byte(0x00);
+	send_byte(0x01);
+   //so, 6/2 MHz ==> 3MHz
 
 	usleep(100);
 

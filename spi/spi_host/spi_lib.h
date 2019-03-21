@@ -54,13 +54,19 @@
    MC_CPU_WE = 0x93, /* CPUMode write extended address */
  };
 
- #define MC_DATA_TMS  (0x40) /* When set use TMS mode */
- #define MC_DATA_IN   (0x20) /* When set read data (Data IN) */
- #define MC_DATA_OUT  (0x10) /* When set write data (Data OUT) */
- #define MC_DATA_LSB  (0x08) /* When set input/output data LSB first. */
- #define MC_DATA_ICN  (0x04) /* When set receive data on negative clock edge */
- #define MC_DATA_BITS (0x02) /* When set count bits not bytes */
- #define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
+#define MC_DATA_TMS  (0x40) /* When set use TMS mode */
+#define MC_DATA_IN   (0x20) /* When set read data (Data IN) */
+#define MC_DATA_OUT  (0x10) /* When set write data (Data OUT) */
+#define MC_DATA_LSB  (0x08) /* When set input/output data LSB first. */
+#define MC_DATA_ICN  (0x04) /* When set receive data on negative clock edge */
+#define MC_DATA_BITS (0x02) /* When set count bits not bytes */
+#define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
+
+#define STATUS_RECV_OFFSET 6
+#define STATUS_SEND_OFFSET 7
+
+#define STATUS_RECV_MASK (0x1<<STATUS_RECV_OFFSET)
+#define STATUS_SEND_MASK (0x1<<STATUS_SEND_OFFSET)
 
 //init spi comm, returns 0 if there is no problem
 int spi_init();
