@@ -21,15 +21,10 @@ int main()
 
    spi_send(SPI_INIT, no_param, NULL); // init
 
-   usleep(2000);
-
    spi_send(SPI_SEND_BIT_INV, val_inv, &spi_status); // send values bit inversion
    printf("send inversion data, status: 0x%x\n", spi_status);
 
-   usleep(2000);
-
    spi_send(SPI_READ_REQ_BIT_INV, no_param, NULL); //send read request
-   usleep(2000);
    spi_read(data_read, &spi_status); // read data inversion
 
    for (size_t i = 0; i < 3; i++) {
@@ -37,12 +32,8 @@ int main()
    }
    printf("status: 0x%x\n", spi_status);
 
-   usleep(2000);
-
    spi_send(SPI_SET_LED, val_led_yellow, &spi_status); // led yellow
    printf("send yellow led, status: 0x%x\n", spi_status);
-
-   usleep(2000);
 
    spi_send(SPI_READ_REQ_LED, no_param, NULL); //send led read request
 

@@ -200,25 +200,37 @@ int spi_init()
 int spi_send(uint8_t cmd, uint8_t val[3], uint8_t *status)
 {
    uint8_t to_send[] = {cmd, val[0], val[1], val[2]};
+   uint8_t status_recv = 0;
+   uint32_t retries = 0;
 
-   xfer_spi(to_send, 4);
+   do{
+      // usleep(2);
+      xfer_spi(to_send, 4);
+      status_recv = to_send[0];
+      retries++;
+   } while(retries < 100 && (status_recv & STATUS_FPGA_RECV_MASK) == 0);
 
-   uint8_t status_recv = to_send[0];
    if(status != NULL)
    {
       *status = status_recv;
    }
 
-   return 0;
+   return retries < 100;
 }
 
 int spi_read(uint8_t val[3], uint8_t *status)
 {
    uint8_t nop_command[] = {0x00, 0x00, 0x00, 0x00}; //nop
+   uint8_t status_recv = 0;
+   uint32_t retries = 0;
 
-   xfer_spi(nop_command, 4);
+   do{
+      usleep(2);
+      xfer_spi(nop_command, 4);
+      status_recv = nop_command[0];
+      retries++;
+   } while(retries < 100 && (status_recv & STATUS_FPGA_SEND_MASK) == 0 );
 
-   uint8_t status_recv = nop_command[0];
    val[0] = nop_command[1];
    val[1] = nop_command[2];
    val[2] = nop_command[3];
@@ -227,5 +239,5 @@ int spi_read(uint8_t val[3], uint8_t *status)
       *status = status_recv;
    }
 
-   return 0;
+   return retries < 100;
 }

@@ -62,11 +62,11 @@
 #define MC_DATA_BITS (0x02) /* When set count bits not bytes */
 #define MC_DATA_OCN  (0x01) /* When set update data on negative clock edge */
 
-#define STATUS_RECV_OFFSET 6
-#define STATUS_SEND_OFFSET 7
+#define STATUS_FPGA_RECV_OFFSET 6 //fpga has received data
+#define STATUS_FPGA_SEND_OFFSET 7 //fpga has sent data
 
-#define STATUS_RECV_MASK (0x1<<STATUS_RECV_OFFSET)
-#define STATUS_SEND_MASK (0x1<<STATUS_SEND_OFFSET)
+#define STATUS_FPGA_RECV_MASK (0x1<<STATUS_FPGA_RECV_OFFSET)
+#define STATUS_FPGA_SEND_MASK (0x1<<STATUS_FPGA_SEND_OFFSET)
 
 //init spi comm, returns 0 if there is no problem
 int spi_init();
