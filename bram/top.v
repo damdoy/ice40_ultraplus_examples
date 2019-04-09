@@ -31,7 +31,8 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
     .clk(clk), .rd_en(eb_rd_en), .wr_en(eb_wr_en), .rd_addr(eb_rd_addr), .wr_addr(eb_wr_addr), .data_in(eb_data_in), .data_out(eb_data_out), .valid_out(eb_valid_out)
    );
 
-   reg [7:0] state;
+   reg [32:0] init;
+   reg [32:0] state;
    reg [2:0] led;
 
    //leds are active low
@@ -52,6 +53,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
       eb_wr_addr = 0;
       eb_data_in = 0;
 
+      init = 0;
       state = 0;
       led = 0;
    end
@@ -71,40 +73,59 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
       eb_wr_addr <= 0;
       eb_data_in <= 0;
 
-      state <= state + 1;
+      //bram need an init, will not work after a few cycles (maybe only when programming in sram?)
+      if(init < 60) begin
+         init <= init + 1;
+      end else begin
+         state <= state + 1;
+      end
 
       //implicit/inferred module
-      //commant this and uncomment the explicit logic below to use explicit module
-      if (state == 0) begin
+      //comment this and uncomment the explicit logic below to use explicit module
+      if (state == 1) begin
          ib_wr_en <= 1;
          ib_wr_addr <= 8'd14;
          ib_data_in <= 32'b010;
-      end else if (state == 1) begin
+      end else if (state == 2) begin
          ib_wr_en <= 1;
          ib_wr_addr <= 8'd15;
          ib_data_in <= 32'b110;
-      end else if (state == 3) begin
+      end else if (state == 4) begin
          ib_rd_en <= 1;
          ib_rd_addr <= 8'd14;
-      end else if (state == 4) begin
+      end else if (state == 6) begin
          led <= ib_data_out[2:0];
+      end else if (state == 32'h1000000) begin
+         ib_rd_en <= 1;
+         ib_rd_addr <= 8'd15;
+      end else if (state == 32'h1000002) begin
+         led <= ib_data_out[2:0];
+      end else if (state == 32'hffffffff) begin
+         state <= state;
       end
 
-      //explicit module
+      //explicit module (doesn't work, output is delayed)
       //uncomment this and comment the implicit logic above to use this
-      // if (state == 0) begin
+      // if (state == 1) begin
       //    eb_wr_en <= 1;
       //    eb_wr_addr <= 8'd14;
       //    eb_data_in <= 32'b010;
-      // end else if (state == 1) begin
+      // end else if (state == 2) begin
       //    eb_wr_en <= 1;
       //    eb_wr_addr <= 8'd15;
       //    eb_data_in <= 32'b110;
-      // end else if (state == 3) begin
+      // end else if (state == 4) begin
       //    eb_rd_en <= 1;
       //    eb_rd_addr <= 8'd14;
-      // end else if (state == 4) begin
+      // end else if (state == 6) begin
       //    led <= eb_data_out[2:0];
+      // end else if (state == 32'h1000000) begin
+      //    eb_rd_en <= 1;
+      //    eb_rd_addr <= 8'd15;
+      // end else if (state == 32'h1000002) begin
+      //    led <= eb_data_out[2:0];
+      // end else if (state == 32'hffffffff) begin
+      //    state <= state;
       // end
    end
 
