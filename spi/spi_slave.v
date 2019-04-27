@@ -1,4 +1,4 @@
-// opcode/status | byte | byte
+// opcode/status | byte | byte | byte
 //read all the data, but can write only the two bytes as opcode contains metadata
 //opcodes:
 //0x00 nop
@@ -91,6 +91,10 @@ module spi_slave(input wire clk, input wire reset,
             if(spi_clk_rising_edge == 1'b1) begin
                rd_data_local[31:0] <= {mosi_reg[0], rd_data_local[31:1]};
                counter_read <= counter_read + 1;
+
+               if(counter_read == 5) begin //status, write master to slave successful
+                  miso_out_reg <= 1;
+               end
 
                if(counter_read >= 31) begin //finish recv
                   if(rd_data_local[8:1] == 8'h1) begin //received init opcode, otherwise ignore

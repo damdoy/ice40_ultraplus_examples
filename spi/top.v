@@ -1,7 +1,5 @@
 `include "spi_slave.v"
 
-//TODO: description
-
 module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, input SPI_SCK, input SPI_SS, input SPI_MOSI, output SPI_MISO, input [3:0] SW);
 
    reg spi_reset;
