@@ -7,6 +7,9 @@ build:
 	icepack $(filename).asc $(filename).bin
 
 prog:
+	iceprog -S $(filename).bin
+
+prog_flash:
 	iceprog $(filename).bin
 
 clean:
