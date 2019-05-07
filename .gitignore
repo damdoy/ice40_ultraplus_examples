@@ -2,4 +2,7 @@
 *.bin
 *.blif
 *.swp
+*.json
 host
+*.o
+*.oo

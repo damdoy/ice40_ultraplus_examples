@@ -31,5 +31,12 @@ bit 7 - data has been written from the fpga
 bit 6 - data sent successfuly to fpga (register was free)
 ```
 
+When sending using the ``int spi_send(uint8_t cmd, uint8_t val[3], uint8_t *status)`` function,
+the order in which the fpga spi_slave module will receive the data is
+```
+| val[2] | val[1] | val[0] | cmd |
+31                               0
+```
+
 Most of the SPI initalisation on the host side is taken from the iceprog source code
 https://github.com/cliffordwolf/icestorm/tree/master/iceprog

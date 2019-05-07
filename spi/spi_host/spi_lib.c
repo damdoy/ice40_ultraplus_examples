@@ -209,13 +209,22 @@ int spi_send(uint8_t cmd, uint8_t val[3], uint8_t *status)
       status_recv = to_send[0];
       retries++;
    } while(retries < 100 && (status_recv & STATUS_FPGA_RECV_MASK) == 0);
-
+   
    if(status != NULL)
    {
       *status = status_recv;
    }
+   return retries >= 100;
+}
 
-   return retries < 100;
+int spi_send3(uint8_t cmd, uint8_t val0, uint8_t val1, uint8_t val2, uint8_t *status){
+   uint8_t param[3] = {val0, val1, val2};
+   return spi_send(cmd, param, status);
+}
+
+int spi_send24b(uint8_t cmd, uint32_t val24b, uint8_t *status){
+   uint8_t param[3] = {val24b&0xff, (val24b>>8)&0xff, (val24b>>16)&0xff};
+   return spi_send(cmd, param, status);
 }
 
 int spi_read(uint8_t val[3], uint8_t *status)
@@ -223,13 +232,14 @@ int spi_read(uint8_t val[3], uint8_t *status)
    uint8_t nop_command[] = {0x00, 0x00, 0x00, 0x00}; //nop
    uint8_t status_recv = 0;
    uint32_t retries = 0;
+   uint32_t max_retries = 1000;
 
    do{
       usleep(2);
       xfer_spi(nop_command, 4);
       status_recv = nop_command[0];
       retries++;
-   } while(retries < 100 && (status_recv & STATUS_FPGA_SEND_MASK) == 0 );
+   } while(retries < max_retries && (status_recv & STATUS_FPGA_SEND_MASK) == 0 );
 
    val[0] = nop_command[1];
    val[1] = nop_command[2];
@@ -239,5 +249,5 @@ int spi_read(uint8_t val[3], uint8_t *status)
       *status = status_recv;
    }
 
-   return retries < 100;
+   return retries < max_retries;
 }

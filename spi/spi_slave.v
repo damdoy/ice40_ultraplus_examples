@@ -1,4 +1,4 @@
-// opcode/status | byte | byte | byte
+// receive: byte2 | byte1 | byte0 | opcode/status
 //read all the data, but can write only the two bytes as opcode contains metadata
 //opcodes:
 //0x00 nop

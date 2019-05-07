@@ -1,0 +1,3 @@
+[submodule "riscv/simple_riscv_cpu"]
+	path = riscv/simple_riscv_cpu
+	url = https://github.com/damdoy/simple_riscv_cpu.git

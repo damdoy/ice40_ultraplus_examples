@@ -72,6 +72,8 @@
 int spi_init();
 
 int spi_send(uint8_t cmd, uint8_t val[3], uint8_t *status);
+int spi_send3(uint8_t cmd, uint8_t val0, uint8_t val1, uint8_t val2, uint8_t *status);
+int spi_send24b(uint8_t cmd, uint32_t val24b, uint8_t *status);
 
 int spi_read(uint8_t val[3], uint8_t *status);
 
