@@ -5,12 +5,11 @@
    0xC write data
 
    opcodes
-   0x0     | Nop, does nothing
-   0x1     | init
+   0x0     | Nop, does nothing (used to read)
+   0x1     | init the spi slave module (should not be seen here, consumed by the spi slave)
    0x2     | Sends 16bits of data (incremental address) ==> will be britten to ram
-   0x3     | Starts the cpu
-   0x4     | Writes 24bits data to the fpga
-   0x5     | reads 24bits data from the fpga
+   0x3     | Starts the cpu, send signal
+   above   | will be put in a register for the cpu to read via the read bus
 
    //byte2 | byte1 | byte0 | opcode/status
 */
@@ -99,11 +98,12 @@ module spi_mm(input wire clk, input wire reset,
                end
             end else begin
                read_data_register <= spi_module_rd_data;
-               // rd_ack <= 1;
+               rd_ack <= 1; //tells spi module that we have read the value
                status_register[0] <= 1;
             end
          end
 
+         //reset the cpu_start signal
          if(cpu_start_ack == 1 && cpu_start == 1) begin
             cpu_start <= 0;
          end
@@ -131,7 +131,6 @@ module spi_mm(input wire clk, input wire reset,
          if(wr_req == 1) begin
             if(wr_addr == 32'h8) begin //assert read
                status_register[0] <= 0;
-               rd_ack <= 1; //tell spi module read ack
             end else if(wr_addr == 32'hC) begin
                write_data_register <= wr_data;
                wr_en <= 1;

@@ -1,4 +1,4 @@
-# RISC-V on ice40
+# RISC-V implementation on iCE40
 
 __**Note: this is a work in progress, it compiles and works, but some debugging, clean and huge improvement on the doc has to be done**__
 
@@ -9,14 +9,6 @@ The cpu can communicate with a computer using spi communication.
 The computer compiles the firmware in `host_server/firmware` using gcc in the riscv gnu toolkit and sends the compiled firmware to the fpga using tool in `host_server`
 
 The system has a rv32i riscv soft cpu, a 32KB memory, a gpio module to drive a rgb led, and a memory mapped SPI module.
-
-Utilization:
-```
-Info: 	         ICESTORM_LC:  3262/ 5280    61%
-Info: 	        ICESTORM_RAM:     4/   30    13%
-Info: 	               SB_IO:    12/   96    12%
-Info: 	               SB_GB:     8/    8   100%
-```
 
 Building and running the system:
 ```
@@ -41,6 +33,14 @@ memory map:
 ram 32KB : 0x0000 - 0x7fff
 SPI: 256 0x8000 - 0x80ff
 GPIO: 256 0x8100 - 0x81ff
+```
+
+Utilization:
+```
+Info: 	         ICESTORM_LC:  3262/ 5280    61%
+Info: 	        ICESTORM_RAM:     4/   30    13%
+Info: 	               SB_IO:    12/   96    12%
+Info: 	               SB_GB:     8/    8   100%
 ```
 
 
@@ -68,7 +68,7 @@ SPI MM module registers
 Host sends the firmware to the fpga using spi, which will be saved to memory immediately
 with an auto incrementing adress
 
-Build the gnu toolchain https://github.com/riscv/riscv-gnu-toolchain with
+Build the gnu toolchain https://github.com/riscv/riscv-gnu-toolchain (works with commit afcc8bc655d30c, gcc 8.3.0) with
 gcc and newlib with the following parameters:
 
 ```

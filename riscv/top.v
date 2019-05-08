@@ -161,10 +161,10 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
       INIT: begin
       end
       REQ_READ_SPI_STATUS: begin
-         if(spi_firm_wr == 1) begin
+         if(spi_firm_wr == 1) begin //spi module received a special opcode to write firmware to ram
             spi_firm_ack <= 1;
             state <= WRITE_MEMORY;
-         end else if (spi_cpu_start == 1) begin
+         end else if (spi_cpu_start == 1) begin //special opcode to start CPU (deassert reset)
             spi_cpu_start_ack <= 1;
             state <= START_CPU;
          end
@@ -195,7 +195,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
 
       endcase
 
-      // cpu handling
+      // cpu makes a read request
       if(cpu_read_req_buf == 0 && cpu_read_req == 1) begin //only rising edge
 
          //memory
@@ -232,6 +232,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
          cpu_read_data_valid <= 1;
       end
 
+      //cpu makes a write request
       if(cpu_write_req == 1) begin
          //memory
          if(cpu_write_addr[31:15] == 17'h0 ) begin //0x0000 - 0x7fff

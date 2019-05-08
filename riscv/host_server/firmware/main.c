@@ -55,7 +55,7 @@ void main()
    while(1)
    {
       int read = *spi_addr;
-      if(read & 0x00000001 != 0)
+      if(read & 0x00000001 != 0) //check if data in the spi module
       {
          read = *(spi_addr+1);
          int operation = (read&0xff);
@@ -79,6 +79,9 @@ void main()
 
          if( operation == 0x7) //pow
          {
+            static int uuu = 1;
+            *(gpio_addr) = uuu;
+            uuu++;
             *(spi_addr+3) = value*value;
          }
       }
