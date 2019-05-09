@@ -1,16 +1,49 @@
 # RISC-V implementation on iCE40
 
-__**Note: this is a work in progress, it compiles and works, but some debugging, clean and huge improvement on the doc has to be done**__
+__**Note: this is a work in progress, it compiles and works but needs some finalizations**__
 
-This is an implementation of the simplest RISC-V cpu (rv32i) on the ice40-ultraplus fpga
+This is an implementation of the simplest RISC-V CPU (rv32i) on the ice40-ultraplus fpga.
 
-The cpu can communicate with a computer using spi communication.
+On the FPGA are implemented, in addition to the CPU and memory, a GPIO module to drive a RGB led and a SPI module to communicate with a host computer (on linux for example)
 
-The computer compiles the firmware in `host_server/firmware` using gcc in the riscv gnu toolkit and sends the compiled firmware to the fpga using tool in `host_server`
+The CPU can communicate with a computer using a bidirectional spi communication. The host computer can send the following commands which will be executed on the fpga's CPU:
+- Light up the RGB LED with a given colour
+- Calculate a Fibonacci number
+- Calculate a power of two
 
-The system has a rv32i riscv soft cpu, a 32KB memory, a gpio module to drive a rgb led, and a memory mapped SPI module.
+```
++----------------------------------+                +-------------------------+
+| iCE40 UltraPlus FPGA             |                |Computer running Linux   |
+| Breakout Board                   |                |                         |
+| +--------------+     +---------+ |                |                         |
+| |              |     |Memory   | |                |                         |
+| | RISC-V CPU   +-----+SPRAM    | |                |                         |
+| | R32i         |     |32K      | |                |                         |
+| |              |     +---------+ |                | +----------+ +--------+ |
+| |              |                 |                | |Host      | |Firmware| |
+| |              |     +---------+ |  +-------+     | |Server    | |Risc-V  | |
+| |              +-----+SPI      | |  |FTDI   |USB  | |x86       | |To be   | |
+| |              |     |Module   +----+Chip   +-------+          | |sent    | |
+| |              +--+  |         | |  |       |     | |          | |        | |
+| |              |  |  +---------+ |  +-------+     | |          | |        | |
+| +--------------+  |              |                | |          | |        | |
+|                   |  +---------+ |                | +----------+ +--------+ |
+|      +------+     +--+GPIO     | |                |                         |
+|      |RGB   |        |Module   | |                |                         |
+|      |LED   +--------+         | |                |                         |
+|      +------+        +---------+ |                |                         |
+|                                  |                |                         |
++----------------------------------+                +-------------------------+
+```
 
-Building and running the system:
+## How to build
+
+There are the following subsystems to compile:
+- The FPGA bitstream itself (with the riscv cpu) using the icestorm tools
+- The host program (`host server`) to be compiled with the gcc of the computer
+- The firmware (`host_server/firmware`) to be compiled with the riscv toolchain
+
+Build and run all the systems:
 ```
 make # compiles the fpga
 make prog # programs the fpga
@@ -28,11 +61,23 @@ cd host_server
 ./host
 ```
 
+Build the gnu toolchain https://github.com/riscv/riscv-gnu-toolchain (works with commit afcc8bc655d30c, gcc 8.3.0) with
+gcc and newlib with the following parameters:
+
+```
+./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
+make
+```
+
+## System
+
+The system has a rv32i riscv soft cpu, a 32KB memory, a gpio module to drive a rgb led, and a memory mapped SPI module.
+
 memory map:
 ```
 ram 32KB : 0x0000 - 0x7fff
-SPI: 256 0x8000 - 0x80ff
-GPIO: 256 0x8100 - 0x81ff
+SPI: 256B : 0x8000 - 0x80ff
+GPIO: 256B : 0x8100 - 0x81ff
 ```
 
 Utilization:
@@ -42,7 +87,6 @@ Info: 	        ICESTORM_RAM:     4/   30    13%
 Info: 	               SB_IO:    12/   96    12%
 Info: 	               SB_GB:     8/    8   100%
 ```
-
 
 SPI commands
 ```
@@ -68,10 +112,4 @@ SPI MM module registers
 Host sends the firmware to the fpga using spi, which will be saved to memory immediately
 with an auto incrementing adress
 
-Build the gnu toolchain https://github.com/riscv/riscv-gnu-toolchain (works with commit afcc8bc655d30c, gcc 8.3.0) with
-gcc and newlib with the following parameters:
-
-```
-./configure --prefix=/opt/riscv --with-arch=rv32i --with-abi=ilp32
-make
-```
+<!-- ## CPU (describe the cpu, its capabilites and a small benchmark) -->
