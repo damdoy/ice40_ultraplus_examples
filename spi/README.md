@@ -16,7 +16,14 @@ OPCODE  | Description
 0x3     | Reads the 16 inverted bits on the next communcation
 0x4     | Writes led value to be on the breakout board. (RGB, LSB is R)
 0x5     | Reads which of the RGB led is on, on the next SPI communication
+0x6     | The host computer will send 4*24bits values (vector)
+0x7     | Reads the 4*24bits values
 ```
+
+The 0x6 and 0x7 commands have the goal to send and receive values segmented in multiple
+packets the fastest possible. Since data are sent the fastest way possible, on the fpga side, this is a test on the register indicating
+free buffers, on the host computer side, this is a test on the meta data sent with
+the SPI packets.
 
 The host.c example lights up leds and sends 24bits to be inverted.
 

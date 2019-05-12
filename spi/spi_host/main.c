@@ -7,6 +7,8 @@
 #define SPI_READ_REQ_BIT_INV 0x03
 #define SPI_SET_LED 0x04
 #define SPI_READ_REQ_LED 0x05
+#define SPI_SEND_VEC 0x06
+#define SPI_READ_VEC 0x07
 
 int main()
 {
@@ -45,6 +47,25 @@ int main()
 
    spi_send(SPI_SET_LED, val_led_blue, &spi_status); // set led blue
    printf("send blue led, status: 0x%x\n", spi_status);
+
+   //send 4 values the fastest possible
+   for (size_t i = 0; i < 4; i++) {
+      int send_value = (i+1)*16;
+      spi_send24b(SPI_SEND_VEC, send_value, &spi_status);
+      printf("sent vector val: 0x%x, status: 0x%x\n", send_value, spi_status);
+   }
+
+   usleep(1000);
+
+   //send read request, the fpga will send the 4 values
+   spi_send(SPI_READ_VEC, no_param, &spi_status);
+   printf("sent read req vector, status: 0x%x\n", spi_status);
+
+   //read values the fastest possible
+   for (size_t i = 0; i < 4; i++) {
+      spi_read(data_read, &spi_status);
+      printf("vector read: 0x%x, 0x%x, 0x%x, status:0x%x\n", data_read[2], data_read[1], data_read[0], spi_status);
+   }
 
    return 0;
 }

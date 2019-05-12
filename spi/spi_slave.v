@@ -1,16 +1,9 @@
 // receive: byte2 | byte1 | byte0 | opcode/status
 //read all the data, but can write only the two bytes as opcode contains metadata
-//opcodes:
-//0x00 nop
-//0x01 init
-//0x02 write 16bits inverted
-//0x03 read 16bits inverted
-//0x04 write leds (16bits LSB)
-//0x05 read leds (16bits LSB)
 
 module spi_slave(input wire clk, input wire reset,
       input wire SPI_SCK, input wire SPI_SS, input wire SPI_MOSI, output wire SPI_MISO,
-      output reg wr_buffer_free, input wr_en, input [23:0] wr_data,
+      output wire wr_buffer_free, input wire wr_en, input wire [23:0] wr_data,
       output reg rd_data_available, input wire rd_ack, output reg [31:0] rd_data
    );
 
@@ -61,8 +54,9 @@ module spi_slave(input wire clk, input wire reset,
       rd_data_local = 0;
 
       rd_data_available = 0;
-      // wr_buffer_free = 1;
    end
+
+   assign wr_buffer_free = ((~wr_queue_full) & (~wr_reg_full) & (~wr_en));
 
    always @(posedge clk)
    begin
@@ -76,7 +70,6 @@ module spi_slave(input wire clk, input wire reset,
          spi_clk_reg <= {spi_clk_reg[0], SPI_SCK};
          mosi_reg <= {mosi_reg[0], SPI_MOSI};
          spi_ss_reg <= {spi_ss_reg[0], SPI_SS};
-         wr_buffer_free <= (~wr_queue_full) & (~wr_reg_full);
 
          if (spi_ss_falling_edge == 1 || spi_ss_rising_edge == 1) begin
             counter_read <= 0;
@@ -155,8 +148,8 @@ module spi_slave(input wire clk, input wire reset,
             buffer_rd_ack <= 0;
          end
 
-         //write
-         if (wr_en == 1 && wr_buffer_free == 1) begin
+         //write to the queue
+         if (wr_en == 1 && (~wr_reg_full) && (~wr_queue_full) ) begin
             wr_queue_full <= 1;
             wr_data_queue <= wr_data;
          end
