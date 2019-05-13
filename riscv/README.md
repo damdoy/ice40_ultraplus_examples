@@ -8,8 +8,11 @@ On the FPGA are implemented, in addition to the CPU and memory, a GPIO module to
 
 The CPU can communicate with a computer using a bidirectional spi communication. The host computer can send the following commands which will be executed on the fpga's CPU:
 - Light up the RGB LED with a given colour
-- Calculate a Fibonacci number
-- Calculate a power of two
+- Calculate a Fibonacci number, to test the stack
+- Calculate a power of two, to test the gcclib soft mathematical functions (mult not available in r32i)
+- Matrix multplication, to test the maximum speed of spi communication
+
+All these operations would normally be optimized by being implemented in fpga and used with a custom riscv command, but they are here to test the soft capabilities of the RISCV cpu
 
 ```
 +----------------------------------+                +-------------------------+
@@ -98,6 +101,7 @@ SPI commands
 0x5     | Run gradient (with soft pwm from the riscv)
 0x6     | Run fibonacci, next read is result
 0x7     | Pow, next read is result
+0x8     | Matrix multiplication, write two matrix, and read one matrix
 ```
 
 SPI MM module registers

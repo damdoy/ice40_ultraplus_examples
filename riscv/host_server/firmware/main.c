@@ -7,6 +7,9 @@
 #define SPI_ADDRESS 0x8000;
 #define GPIO_ADDRESS 0x8100;
 
+#define MATRIX_SIDE_SIZE 2
+#define MATRIX_TOTAL_SIZE (MATRIX_SIDE_SIZE*MATRIX_SIDE_SIZE)
+
 typedef unsigned int uint;
 
 void set_led(int *gpio_addr, int rgb24)
@@ -47,10 +50,27 @@ void gradient(int *gpio_addr)
    }
 }
 
+//most naive matrix mult possible in O^3
+void matrix_mult(int *mat0, int *mat1, int *mat_result){
+   for (int i = 0; i < MATRIX_SIDE_SIZE; i++) {
+      for (int j = 0; j < MATRIX_SIDE_SIZE; j++) {
+         mat_result[j*MATRIX_SIDE_SIZE+i] = 0;
+         for (int k = 0; k < MATRIX_SIDE_SIZE; k++) {
+            mat_result[j*MATRIX_SIDE_SIZE+i] += mat0[j*MATRIX_SIDE_SIZE+k]*mat1[k*MATRIX_SIDE_SIZE+i];
+         }
+      }
+   }
+}
+
 void main()
 {
    int *spi_addr = (int*)SPI_ADDRESS;
    int *gpio_addr = (int*)GPIO_ADDRESS; //bit 0=R, 1=G, 2=B
+
+   int mat_counter = 0;
+   int mat0[MATRIX_TOTAL_SIZE];
+   int mat1[MATRIX_TOTAL_SIZE];
+   int mat_result[MATRIX_TOTAL_SIZE];
 
    while(1)
    {
@@ -79,10 +99,32 @@ void main()
 
          if( operation == 0x7) //pow
          {
-            static int uuu = 1;
-            *(gpio_addr) = uuu;
-            uuu++;
             *(spi_addr+3) = value*value;
+         }
+
+         if(operation == 0x8) //matrix mult
+         {
+            //read first matrix
+            if(mat_counter < MATRIX_TOTAL_SIZE)
+            {
+               mat0[mat_counter] = value;
+               mat_counter++;
+            }
+            //read second matrix
+            else if(mat_counter >= MATRIX_TOTAL_SIZE && mat_counter < (MATRIX_TOTAL_SIZE*2) )
+            {
+               mat1[mat_counter-MATRIX_TOTAL_SIZE] = value;
+               mat_counter++;
+            }
+            //will send result after last receive
+            if (mat_counter >= (MATRIX_TOTAL_SIZE*2) ){
+
+               matrix_mult(mat0, mat1, mat_result);
+               for (size_t i = 0; i < MATRIX_TOTAL_SIZE; i++) {
+                  while( (*spi_addr & 0x2) != 0){} //read status, write reg free?
+                  *(spi_addr+3) = mat_result[i]; //write result
+               }
+            }
          }
       }
    }

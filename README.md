@@ -12,5 +12,6 @@ Some of the examples include:
 - SPI communication with a host computer
 - Reading the flash (N25Q032A) from the FPGA
 - A RISC-V implementation running on the FPGA
+   - the RISC-V groups all of the above examples to make a complete working system able to do matrix multiplications, fibonacci and multiplcations, all on a RISC-V soft CPU communicating with a Linux computer.
 
 All the examples are synthetized and programmed on the breakout board using the open souce tools from the icestorm project (http://www.clifford.at/icestorm/)

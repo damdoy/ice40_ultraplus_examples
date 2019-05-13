@@ -80,7 +80,8 @@ module spi_mm(input wire clk, input wire reset,
          data_valid <= 0;
          wr_en <= 0;
 
-         status_register[1] <= wr_buffer_free;
+         status_register[1] <= ~wr_buffer_free;
+         status_register[2] <= 1;
 
          if(rd_data_available == 1 && status_register[0] == 0) begin
             if(spi_module_rd_data[7:0] == 8'h0) begin //NOP, does nothing, is not taken into accounts
