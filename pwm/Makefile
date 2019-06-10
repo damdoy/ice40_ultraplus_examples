@@ -6,7 +6,10 @@ build:
 	arachne-pnr -d 5k -P sg48 -p $(pcf_file) $(filename).blif -o $(filename).asc
 	icepack $(filename).asc $(filename).bin
 
-prog:
+prog: #for sram
+	iceprog -S $(filename).bin
+
+prog_flash:
 	iceprog $(filename).bin
 
 clean:
