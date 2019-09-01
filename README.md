@@ -10,6 +10,8 @@ Some of the examples include:
 - PWM on the RGB led
 - Read and write to SPRAM modules from the FPGA
 - SPI communication with a host computer
+   - Using a soft-IP module
+   - Using the hardware SPI module on the iCE40
 - Read and write to BRAM
 - Reading the flash (N25Q032A) from the FPGA
 - DSP (`SB_MAC16`) example with MAC (multiply and accumulate) operations

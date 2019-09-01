@@ -1,4 +1,4 @@
-# Simple SPI example for the iCE40 UltraPlus Breakout board
+# Simple soft-IP SPI example for the iCE40 UltraPlus Breakout board
 
 This example is composed of a host C program compiled on Linux communicating with the ice40 FPGA via the FTDI chip on the breakout board.
 
@@ -44,6 +44,13 @@ the order in which the fpga spi_slave module will receive the data is
 | val[2] | val[1] | val[0] | cmd |
 31                               0
 ```
+
+## How to build and run
+
+The bitstream for the fpga should be built first `make build`, then it should be programmed on the fpga `make prog`.
+
+One the fpga is programmed, the host program in `spi_host` should be build with `make`.
+Then, running `./host` should lunch the host and it should start to communicate with the fpga.
 
 Most of the SPI initalisation on the host side is taken from the iceprog source code
 https://github.com/cliffordwolf/icestorm/tree/master/iceprog
