@@ -34,7 +34,7 @@ A simple state machine is implemented in the `top.v` file, its goal is to initia
 
 The bitstream for the fpga should be built first `make build`, then it should be programmed on the fpga `make prog`.
 
-One the fpga is programmed, the host program in `spi_host` should be build with `make`.
+One the fpga is programmed, the host program in `spi_host/` should be build with `make`.
 Then, running `./host` should lunch the host and it should start to communicate with the fpga.
 
 Most of the SPI initalisation on the host side is taken from the iceprog source code

@@ -23,3 +23,10 @@ All the examples are synthetized and programmed on the breakout board using the 
 # How to build
 
 Each example can be compiled with a `make` which will create the bitstream using the icestorm opensource tools, once the breakout board is plugged, `make prog` will program the fpga using the sram, `make prog_flash` will program the flash of the fpga.
+
+### Versions used
+
+Yosys 0.9  
+arachne-pnr 0.1+325+0  
+gcc version 5.4.0  
+Built on Linux Mint 18.2

@@ -97,12 +97,12 @@ int main()
    sleep(1);
    spi_send24b(SPI_POW, 125, &spi_status);
    spi_read(data_read, &spi_status); // read data inversion
-   printf("read: %d, status: 0x%x\n", data_read[0] + (data_read[1]<<8) + (data_read[2]<<16), spi_status);
+   printf("calulating 125^2 read: %d, status: 0x%x\n", data_read[0] + (data_read[1]<<8) + (data_read[2]<<16), spi_status);
 
    sleep(1);
    spi_send24b(SPI_FIBONACCI, 20, &spi_status); //a fibo too big will make a stack overflow
    spi_read(data_read, &spi_status); // read data inversion
-   printf("read: %d, status: 0x%x\n", data_read[0] + (data_read[1]<<8) + (data_read[2]<<16), spi_status);
+   printf("calculating fib(20) read: %d, status: 0x%x\n", data_read[0] + (data_read[1]<<8) + (data_read[2]<<16), spi_status);
 
    sleep (1);
    printf("sending the matrices\n");

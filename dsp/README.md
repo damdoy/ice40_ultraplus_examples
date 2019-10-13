@@ -8,6 +8,7 @@ a <- a + (a*5)
 a <- a + (a*a)
 a == 581406
 ```
+If the result of this calculation is correct, it will light up the LED as white.
 
 Two implementations of this calculation are made, one without DSP `calc.v` and the other using a DSP block `calc_dsp.v`, they apply the above calculation one operation per cycle and light up the led if the result is correct.
 
@@ -20,6 +21,6 @@ Here are the fpga elements usage for both implementations, the multiplications h
 | LCs | 1280 | 64 |
 | MAC16s  | 0 | 1 |
 
-The two modules, with and without the dsp are in the `top.v` file, only one can be used at once. 
+The two modules, with and without the dsp are in the `top.v` file, only one can be used at once.
 
 To note that in a very recent or future implementation of yosys, it will be able to infer DSP from the verilog (https://twitter.com/oe1cxw/status/1098647996445659136?lang=en).

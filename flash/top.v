@@ -77,7 +77,9 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
       end
       WAIT_READ_DATA: begin
          if(spi_rd_data_available == 1) begin
-            led <= spi_rd_data[10:8]; //reads the three LSB of the third byte, so 0x100002
+            //reads the three LSB of the third byte, so 0x100002, which should be 0x02 (green)
+            //31:24 is the first byte, 23:16 the second and 15:8 is the third
+            led <= spi_rd_data[10:8];
             state <= DISPLAY_LED;
             spi_rd_ack <= 1; //resets the spi module back to read address
          end
