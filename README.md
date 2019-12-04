@@ -17,8 +17,11 @@ Some of the examples include:
 - DSP (`SB_MAC16`) example with MAC (multiply and accumulate) operations
 - A RISC-V implementation running on the FPGA
    - the RISC-V groups all of the above examples to make a complete working system able to do matrix multiplications, fibonacci and multiplcations, all on a RISC-V soft CPU communicating with a Linux computer.
+- PLL and use of internal clock
 
 All the examples are synthetized and programmed on the breakout board using the open souce tools from the icestorm project (http://www.clifford.at/icestorm/).
+
+Most of the examples use the 12MHz external clock from the breakout board. The PLL example shows how to use the internal 48MHz clock.
 
 # How to build
 
@@ -28,5 +31,6 @@ Each example can be compiled with a `make` which will create the bitstream using
 
 Yosys 0.9  
 arachne-pnr 0.1+325+0  
+nextpnr-ice40 (git sha1 c365dd1)
 gcc version 5.4.0  
 Built on Linux Mint 18.2
