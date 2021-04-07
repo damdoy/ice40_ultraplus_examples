@@ -25,12 +25,34 @@ Most of the examples use the 12MHz external clock from the breakout board. The P
 
 # How to build
 
-Each example can be compiled with a `make` which will create the bitstream using the icestorm opensource tools, once the breakout board is plugged, `make prog` will program the fpga using the sram, `make prog_flash` will program the flash of the fpga.
+Each example can be compiled with a `make` which will create the
+bitstream using the icestorm opensource tools, once the breakout board
+is plugged.
+
+`make prog` will program the fpga using the internal sram based condiguration memory in
+the Ice40 Ultraplus device. Since this memory is volatile, it will get
+erased every time the board is powered down.
+
+`make prog_flash` will will write the FPGA configuration to the separate
+flash chip on the breakout board. However the FPGA will not be able to
+communicate with the host through the USB using the SPI in this mode. A
+power cycle may be also be needed for the FPGA to read the configuration
+from the flash memory.
+
+Note that the access to the Flash memory and the SPI interface is
+controlled by jumpers on the breakout board. The jumper settings are
+described in the [Lattice iCE40
+UltraPlus Breakout Board User Guide
+(pdf)](https://www.latticesemi.com/view_document?document_id=51987).
+
+For `make prog` to work, the jumpers at J6 should be in vertically
+oriented. For `make prog_flash` to work, the jumpers at J6 should be in
+horizontal orientation.
 
 ### Versions used
 
-Yosys 0.9  
-arachne-pnr 0.1+325+0  
+Yosys 0.9
+arachne-pnr 0.1+325+0
 nextpnr-ice40 (git sha1 c365dd1)
-gcc version 5.4.0  
+gcc version 5.4.0
 Built on Linux Mint 18.2
