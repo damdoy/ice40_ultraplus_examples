@@ -37,7 +37,7 @@ is plugged.
 the Ice40 Ultraplus device. Since this memory is volatile, it will get
 erased every time the board is powered down.
 
-`make prog_flash` will will write the FPGA configuration to the separate
+`make prog_flash` will write the FPGA configuration to the separate
 flash chip on the breakout board. However the FPGA will not be able to
 communicate with the host through the USB using the SPI in this mode. A
 power cycle may be also be needed for the FPGA to read the configuration
@@ -55,8 +55,9 @@ horizontal orientation.
 
 ### Versions used
 
-Yosys 0.9
-arachne-pnr 0.1+325+0
-nextpnr-ice40 (git sha1 c365dd1)
-gcc version 5.4.0
+* Yosys 0.9
+* arachne-pnr 0.1+325+0
+* nextpnr-ice40 (git sha1 c365dd1)
+* gcc version 5.4.0
+
 Built on Linux Mint 18.2
