@@ -55,9 +55,9 @@ horizontal orientation.
 
 ### Versions used
 
-* Yosys 0.9
-* arachne-pnr 0.1+325+0
-* nextpnr-ice40 (git sha1 c365dd1)
-* gcc version 5.4.0
+- icestorm suite (git sha1 9f66f9ce16941c)
+- yosys 0.15
+- nextpnr-ice40 0.2
+- gcc version 5.4.0  
 
-Built on Linux Mint 18.2
+Built on Linux Mint 20.0
