@@ -1,5 +1,7 @@
 # DSP example on ice40 ultraplus
 
+This example needs some changes before it will work. Please wait until it is updated.
+
 This example show how to use the DSP blocks (`SB_MAC16`) within the ice40 ultraplus fpga to implement MAC (multiply and accumulate) operations. The sequence of operations are the following:
 
 ```

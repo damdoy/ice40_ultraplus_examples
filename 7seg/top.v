@@ -32,7 +32,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
       counter_number = 0;
    end
 
-   always @(posedge clk)
+   always #10
    begin
       counter_time <= counter_time + 1;
 

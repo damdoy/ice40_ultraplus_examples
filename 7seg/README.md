@@ -1,5 +1,7 @@
 # 7-Segment example
 
+This example needs to be updated before it's ready. please check back for updates.
+
 The goal of this example is to display hexadecimal value on a 7-segment connected to the fpga.
 
 7 IOs on the header B on the Breakout board are used for the display.

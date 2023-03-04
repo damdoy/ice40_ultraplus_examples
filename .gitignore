@@ -6,3 +6,4 @@
 host
 *.o
 *.oo
+.vscode

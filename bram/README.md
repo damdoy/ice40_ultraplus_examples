@@ -1,5 +1,7 @@
 # BRAM example
 
+This example needs to be updated before it's ready to use. Please check for updates.
+
 The goal of this example was to understand how yosys infer BRAM from verlog arrays.
 The ice40 ultraplus has 30 BRAM of 4kbit, and each BRAM can save a lot of LUT logic, so understanding how they are used is important.
 
