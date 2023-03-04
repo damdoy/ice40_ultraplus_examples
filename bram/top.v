@@ -5,7 +5,7 @@
 //and an explicit using the bram primitive in yosys
 //bram cannot be read and written at the same time
 
-module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
+module top(output LED_R, output LED_G, output LED_B);
 
    reg ib_rd_en;
    reg ib_wr_en;
@@ -14,9 +14,16 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
    reg [15:0] ib_data_in;
    wire [15:0] ib_data_out;
    wire ib_valid_out;
+   wire sclk;
+
+   SB_HFOSC SB_HFOSC_inst(
+      .CLKHFEN(1),
+      .CLKHFPU(1),
+      .CLKHF(sclk)
+   );
 
    implicit_bram implicit_bram_inst(
-    .clk(clk), .rd_en(ib_rd_en), .wr_en(ib_wr_en), .rd_addr(ib_rd_addr), .wr_addr(ib_wr_addr), .data_in(ib_data_in), .data_out(ib_data_out), .valid_out(ib_valid_out)
+    .clk(sclk), .rd_en(ib_rd_en), .wr_en(ib_wr_en), .rd_addr(ib_rd_addr), .wr_addr(ib_wr_addr), .data_in(ib_data_in), .data_out(ib_data_out), .valid_out(ib_valid_out)
    );
 
    reg eb_rd_en;
@@ -28,7 +35,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
    wire eb_valid_out;
 
    explicit_bram explicit_bram_inst(
-    .clk(clk), .rd_en(eb_rd_en), .wr_en(eb_wr_en), .rd_addr(eb_rd_addr), .wr_addr(eb_wr_addr), .data_in(eb_data_in), .data_out(eb_data_out), .valid_out(eb_valid_out)
+    .clk(sclk), .rd_en(eb_rd_en), .wr_en(eb_wr_en), .rd_addr(eb_rd_addr), .wr_addr(eb_wr_addr), .data_in(eb_data_in), .data_out(eb_data_out), .valid_out(eb_valid_out)
    );
 
    reg [32:0] init;
@@ -58,7 +65,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
       led = 0;
    end
 
-   always @(posedge clk)
+   always @(posedge sclk)
    begin
 
       ib_rd_en <= 0;

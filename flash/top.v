@@ -4,7 +4,7 @@
 //in flash master, prog.hex is written in the flash at the 0x100000 offset and contains 00, 01, 02, 03, 04
 //some of these values are read and displayed on the LED
 
-module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, output SPI_SCK, output SPI_SS, input SPI_MOSI, output SPI_MISO, input [3:0] SW);
+module top(output LED_R, output LED_G, output LED_B, output SPI_SCK, output SPI_SS, input SPI_MOSI, output SPI_MISO);
 
    reg spi_reset;
    wire spi_addr_buffer_free;
@@ -13,7 +13,12 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
    wire spi_rd_data_available;
    reg spi_rd_ack;
    wire [31:0] spi_rd_data;
-
+   wire sclk;
+   SB_HFOSC SB_HFOSC_inst(
+      .CLKHFEN(1),
+      .CLKHFPU(1),
+      .CLKHF(sclk)
+   );
    parameter IDLE = 0, INIT=IDLE+1, SEND_ADDR_SPI=INIT+1, WAIT_READ_DATA=SEND_ADDR_SPI+1, DISPLAY_LED=WAIT_READ_DATA+1;
 
    reg [3:0] state;
@@ -54,7 +59,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B, 
       counter = 0;
    end
 
-   always @(posedge clk)
+   always @(posedge sclk)
    begin
 
       //defaults

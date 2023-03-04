@@ -11,7 +11,7 @@ set_io P4 4
 set_io P6 6
 set_io P9 9
 set_io P10 10
-set_io P11 10
+set_io P11 11
 set_io P12 12
 set_io P13 13
 set_io P18 18

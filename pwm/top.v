@@ -3,7 +3,7 @@
 //light up the leds using the pwm module, starts at lowest value and then goes slowly to
 //128, then back to 0
 
-module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
+module top(output LED_R, output LED_G, output LED_B);
   
   reg [17:0] counter;
   reg [6:0] val_pwm; //only make it go to 128 (half brightness)
@@ -12,9 +12,16 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
   wire pwm_en_write;
   wire [7:0] pwm_value_write;
   wire pwm_out;
+  wire sclk;
+
+  SB_HFOSC SB_HFOSC_inst(
+      .CLKHFEN(1),
+      .CLKHFPU(1),
+      .CLKHF(sclk)
+   );
   
   pwm pwm_inst(
-    .clk(clk), .en(pwm_en_write), .value_input(pwm_value_write), .out(pwm_out)
+    .clk(sclk), .en(pwm_en_write), .value_input(pwm_value_write), .out(pwm_out)
   );
   
   //leds are active low
@@ -28,7 +35,7 @@ module top(input [3:0] SW, input clk, output LED_R, output LED_G, output LED_B);
       val_pwm = 0;
   end
   
-  always @(posedge clk)
+  always @(posedge sclk)
   begin
     
     pwm_en_write = 0;

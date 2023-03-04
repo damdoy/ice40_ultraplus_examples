@@ -1,5 +1,5 @@
 //input external 12MHz clk disabled, as we are using the PLL with internal oscillator, having both don't seem possible
-module top(input [3:0] SW, /*input clk,*/ output LED_R, output LED_G, output LED_B);
+module top(output LED_R, output LED_G, output LED_B);
    wire clk_48mhz; //internal
    wire clk_10khz; //internal
    wire clk_24mhz;
