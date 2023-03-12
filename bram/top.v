@@ -14,14 +14,27 @@ module top(output LED_R, output LED_G, output LED_B);
    reg [15:0] ib_data_in;
    wire [15:0] ib_data_out;
    wire ib_valid_out;
+   wire clk;
    wire sclk;
 
    SB_HFOSC SB_HFOSC_inst(
       .CLKHFEN(1),
       .CLKHFPU(1),
-      .CLKHF(sclk)
+      .CLKHF(clk)
    );
-
+   SB_PLL40_CORE #(
+      .FEEDBACK_PATH("SIMPLE"),
+      .PLLOUT_SELECT("GENCLK"),
+      .DIVR(4'b0000),
+      .DIVF(7'b0001111),
+      .DIVQ(3'b101),
+      .FILTER_RANGE(3'b100),
+    ) SB_PLL40_CORE_inst (
+      .RESETB(1'b1),
+      .BYPASS(1'b0),
+      .PLLOUTCORE(sclk),
+      .REFERENCECLK(clk)
+   );
    implicit_bram implicit_bram_inst(
     .clk(sclk), .rd_en(ib_rd_en), .wr_en(ib_wr_en), .rd_addr(ib_rd_addr), .wr_addr(ib_wr_addr), .data_in(ib_data_in), .data_out(ib_data_out), .valid_out(ib_valid_out)
    );

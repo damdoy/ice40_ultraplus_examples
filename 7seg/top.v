@@ -9,6 +9,7 @@ module top(output LED_R, output LED_G, output LED_B,
    reg [3:0] counter_number;
 
    wire [6:0] seg_out;
+   wire clk;
    wire sclk;
    bcd_to_7seg bcd_to_7seg_inst(.bcd_in(counter_number), .seg_out(seg_out));
 
@@ -19,13 +20,13 @@ module top(output LED_R, output LED_G, output LED_B,
 
    //see bcd_to_7seg.v for segments placement
    //using a common anode 7segments, so invert values
-   assign P6 = ~seg_out[0]; //a
-   assign P9 = ~seg_out[1]; //b
-   assign P10 = ~seg_out[2]; //c
-   assign P11 = ~seg_out[3]; //d
-   assign P12 = ~seg_out[4]; //e
-   assign P13 = ~seg_out[5]; //f
-   assign P18 = ~seg_out[6]; //g
+   assign P6 = seg_out[0]; //a
+   assign P9 = seg_out[1]; //b
+   assign P10 = seg_out[2]; //c
+   assign P11 = seg_out[3]; //d
+   assign P12 = seg_out[4]; //e
+   assign P13 = seg_out[5]; //f
+   assign P18 = seg_out[6]; //g
 
    initial begin
       counter_time = 0;
@@ -34,7 +35,20 @@ module top(output LED_R, output LED_G, output LED_B,
    SB_HFOSC SB_HFOSC_inst(
       .CLKHFEN(1),
       .CLKHFPU(1),
-      .CLKHF(sclk)
+      .CLKHF(clk)
+   );
+   SB_PLL40_CORE #(
+      .FEEDBACK_PATH("SIMPLE"),
+      .PLLOUT_SELECT("GENCLK"),
+      .DIVR(4'b0000),
+      .DIVF(7'b0000011),
+      .DIVQ(3'b101),
+      .FILTER_RANGE(3'b100),
+    ) SB_PLL40_CORE_inst (
+      .RESETB(1'b1),
+      .BYPASS(1'b0),
+      .PLLOUTCORE(sclk),
+      .REFERENCECLK(clk)
    );
    always @ (posedge sclk)
    begin
