@@ -50,10 +50,6 @@ from the flash memory.
 
 Note that the IcyBlue Feather can only be programmed through SPI Flash. This means you will need to use the `prog_flash` make command or use another tool like [Adafruit's FTDIflash](https://learn.adafruit.com/programming-spi-flash-prom-with-an-ft232h-breakout) program to write the flash chip.
 
-For `make prog` to work, the jumpers at J6 should be in vertically
-oriented. For `make prog_flash` to work, the jumpers at J6 should be in
-horizontal orientation.
-
 ### Versions used
 
 - icestorm suite (git sha1 9f66f9ce16941c)
