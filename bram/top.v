@@ -102,51 +102,51 @@ module top(output LED_R, output LED_G, output LED_B);
 
       //implicit/inferred module
       //comment this and uncomment the explicit logic below to use explicit module
-      if (state == 1) begin
-         ib_wr_en <= 1;
-         ib_wr_addr <= 8'd14;
-         ib_data_in <= 32'b010;
-      end else if (state == 2) begin
-         ib_wr_en <= 1;
-         ib_wr_addr <= 8'd15;
-         ib_data_in <= 32'b110;
-      end else if (state == 4) begin
-         ib_rd_en <= 1;
-         ib_rd_addr <= 8'd14;
-      end else if (state == 6) begin
-         led <= ib_data_out[2:0];
-      end else if (state == 32'h1000000) begin
-         ib_rd_en <= 1;
-         ib_rd_addr <= 8'd15;
-      end else if (state == 32'h1000002) begin
-         led <= ib_data_out[2:0];
-      end else if (state == 32'hffffffff) begin
-         state <= state;
-      end
-
-      //explicit module (doesn't work, output is delayed)
-      //uncomment this and comment the implicit logic above to use this
       // if (state == 1) begin
-      //    eb_wr_en <= 1;
-      //    eb_wr_addr <= 8'd14;
-      //    eb_data_in <= 32'b010;
+      //    ib_wr_en <= 1;
+      //    ib_wr_addr <= 8'd14;
+      //    ib_data_in <= 32'b010;
       // end else if (state == 2) begin
-      //    eb_wr_en <= 1;
-      //    eb_wr_addr <= 8'd15;
-      //    eb_data_in <= 32'b110;
+      //    ib_wr_en <= 1;
+      //    ib_wr_addr <= 8'd15;
+      //    ib_data_in <= 32'b110;
       // end else if (state == 4) begin
-      //    eb_rd_en <= 1;
-      //    eb_rd_addr <= 8'd14;
+      //    ib_rd_en <= 1;
+      //    ib_rd_addr <= 8'd14;
       // end else if (state == 6) begin
-      //    led <= eb_data_out[2:0];
+      //    led <= ib_data_out[2:0];
       // end else if (state == 32'h1000000) begin
-      //    eb_rd_en <= 1;
-      //    eb_rd_addr <= 8'd15;
+      //    ib_rd_en <= 1;
+      //    ib_rd_addr <= 8'd15;
       // end else if (state == 32'h1000002) begin
-      //    led <= eb_data_out[2:0];
+      //    led <= ib_data_out[2:0];
       // end else if (state == 32'hffffffff) begin
       //    state <= state;
       // end
+
+      //explicit module (doesn't work, output is delayed)
+      //uncomment this and comment the implicit logic above to use this
+      if (state == 1) begin
+         eb_wr_en <= 1;
+         eb_wr_addr <= 8'd14;
+         eb_data_in <= 32'b010;
+      end else if (state == 2) begin
+         eb_wr_en <= 1;
+         eb_wr_addr <= 8'd15;
+         eb_data_in <= 32'b110;
+      end else if (state == 4) begin
+         eb_rd_en <= 1;
+         eb_rd_addr <= 8'd14;
+      end else if (state == 6) begin
+         led <= eb_data_out[2:0];
+      end else if (state == 32'h1000000) begin
+         eb_rd_en <= 1;
+         eb_rd_addr <= 8'd15;
+      end else if (state == 32'h1000002) begin
+         led <= eb_data_out[2:0];
+      end else if (state == 32'hffffffff) begin
+         state <= state;
+      end
    end
 
 endmodule

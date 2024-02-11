@@ -6,6 +6,21 @@ set_io LED_B 39
 set_io LED2 2
 set_io LED3 3
 
+set_io reset 4
+
+set_io BUS8[0] 37
+set_io BUS8[1] 38
+set_io BUS8[2] 42
+set_io BUS8[3] 43
+set_io BUS8[4] 44
+set_io BUS8[5] 45
+set_io BUS8[6] 46
+set_io BUS8[7] 47
+
+set_io MUX3[0] 9
+set_io MUX3[1] 10
+set_io MUX3[2] 11
+
 #GPIO
 set_io P4 4
 set_io P6 6
