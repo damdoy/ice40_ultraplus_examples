@@ -1,9 +1,9 @@
-# Psuedo Random Seed Generator
+# Pseudo Random Seed Generator
 
-This example is to make a Psuedo-Random Seed Generator. This example was generated in part as a prompt 
+This example is to make a Pseudo-Random Seed Generator. This example was generated in part as a prompt 
 engineering test for ChatGPT.
 
-This psuedorandom seed generator provides an 8 bit output seed. The output frequencies and enable signals are provided externally by a host controller such as an RP2040. 
+This pseudorandom seed generator provides an 8 bit output seed. The output frequencies and enable signals are provided externally by a host controller such as an RP2040. 
 
 Inputs are:
 
@@ -15,7 +15,7 @@ Inputs are:
 
 Outputs are:
 
-`seed` - an 8 bit wide psuedorandom seed.
+`seed` - an 8 bit wide pseudorandom seed.
 
 `seed ready` - a signal indicating that the seed is stable and ready for consumption by the host.
 
